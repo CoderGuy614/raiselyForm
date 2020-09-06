@@ -2,23 +2,22 @@ import React from "react";
 import { Form, Container, Col, Row, InputGroup, Button } from "react-bootstrap";
 import FormHeader from "./FormHeader";
 import { Formik } from "formik";
+import * as yup from "yup";
+
+const schema = yup.object({
+  firstName: yup.string().required(),
+  lastName: yup.string().required(),
+  email: yup.string().email().required(),
+  password: yup.string().required(),
+  password2: yup.string().required(),
+});
 
 const Signup = () => {
   return (
     <Container className="w-50 mt-4">
       <FormHeader />
       <Formik
-        validate={(values) => {
-          const errors = {};
-          if (!values.email) {
-            errors.email = "Required";
-          } else if (
-            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-          ) {
-            errors.email = "Invalid email address";
-          }
-          return errors;
-        }}
+        validationSchema={schema}
         onSubmit={(values) => console.log(values)}
         initialValues={{
           firstName: "",
@@ -49,8 +48,12 @@ const Signup = () => {
                   value={values.firstName}
                   onChange={handleChange}
                   isValid={touched.firstName && !errors.firstName}
+                  isInvalid={!!errors.firstName}
                 />
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                <Form.Control.Feedback />
+                <Form.Control.Feedback type="invalid">
+                  {errors.email}
+                </Form.Control.Feedback>
               </Form.Group>
               <Form.Group as={Col} md="6" controlId="validationFormik02">
                 <Form.Label>Last name</Form.Label>
@@ -61,9 +64,13 @@ const Signup = () => {
                   value={values.lastName}
                   onChange={handleChange}
                   isValid={touched.lastName && !errors.lastName}
+                  isInvalid={!!errors.lastName}
                 />
 
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                <Form.Control.Feedback />
+                <Form.Control.Feedback type="invalid">
+                  {errors.email}
+                </Form.Control.Feedback>
               </Form.Group>
             </Form.Row>
             {/* Second Row */}
@@ -76,11 +83,12 @@ const Signup = () => {
                   name="email"
                   value={values.email}
                   onChange={handleChange}
+                  isValid={touched.email && !errors.email}
                   isInvalid={!!errors.email}
                 />
-
+                <Form.Control.Feedback />
                 <Form.Control.Feedback type="invalid">
-                  {errors.city}
+                  {errors.email}
                 </Form.Control.Feedback>
               </Form.Group>
             </Form.Row>
@@ -93,6 +101,7 @@ const Signup = () => {
                   name="password"
                   value={values.password}
                   onChange={handleChange}
+                  isValid={touched.password && !errors.password}
                   isInvalid={!!errors.password}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -107,10 +116,11 @@ const Signup = () => {
                   name="password2"
                   value={values.password2}
                   onChange={handleChange}
+                  isValid={touched.password2 && !errors.password2}
                   isInvalid={!!errors.password2}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errors.state}
+                  {errors.password2}
                 </Form.Control.Feedback>
               </Form.Group>
             </Form.Row>
