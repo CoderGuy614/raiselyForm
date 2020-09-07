@@ -2,7 +2,13 @@ import React from "react";
 import { apiPost } from "../api";
 import { Modal, Button, Table, Image } from "react-bootstrap";
 
-const ConfirmModal = ({ showModal, setShowModal, setResponse, fields }) => {
+const ConfirmModal = ({
+  showModal,
+  setShowModal,
+  setResponse,
+  setLoading,
+  fields,
+}) => {
   return (
     <div>
       <Modal show={showModal} onHide={() => setShowModal(false)}>
@@ -34,11 +40,17 @@ const ConfirmModal = ({ showModal, setShowModal, setResponse, fields }) => {
           <Button
             variant="success"
             onClick={() => {
+              setLoading(true);
               apiPost(fields)
                 .then((res) => {
                   setResponse(res);
+                  setLoading(false);
                 })
-                .catch((err) => console.log(err));
+                .catch((err) => {
+                  setResponse(err);
+                  setLoading(false);
+                });
+
               setShowModal(false);
             }}
           >
