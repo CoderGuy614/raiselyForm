@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import ConfirmModal from "./ConfirmModal";
 import {
   Form,
   Container,
   Col,
   Row,
-  InputGroup,
   Button,
   Alert,
+  Spinner,
 } from "react-bootstrap";
 import FormHeader from "./FormHeader";
+
 import { Formik } from "formik";
 import * as yup from "yup";
 
@@ -17,25 +20,80 @@ const schema = yup.object({
   lastName: yup.string().required(),
   email: yup.string().email().required(),
   password: yup.string().required(),
-  password2: yup.string().required(),
+  confirmation: yup
+    .string()
+    .required()
+    .oneOf([yup.ref("password"), null], "Passwords must match"),
 });
 
 const Signup = () => {
+  const [fields, setFields] = useState({});
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  const showLoading = () => (
+    <div className="d-flex justify-content-center my-4">
+      <Spinner
+        style={{ display: loading ? "" : "none" }}
+        animation="border"
+        role="status"
+      >
+        <span className="sr-only">Loading...</span>
+      </Spinner>
+    </div>
+  );
+
+  const showError = () => (
+    <Alert
+      variant="danger"
+      className="mt-3"
+      style={{ display: error ? "" : "none" }}
+    >
+      {"Success! "}
+    </Alert>
+  );
+
+  const showSuccess = () => (
+    <Alert
+      variant="success"
+      className="mt-3"
+      style={{ display: success ? "" : "none" }}
+    >
+      {error}
+    </Alert>
+  );
+
+  const apiPost = (values) => {
+    console.log(JSON.stringify(values));
+  };
+
+  const proceed = (values) => {
+    setFields(values);
+    setShowModal(true);
+  };
+
   return (
     <Container
       className="d-flex justify-content-center"
       style={{ height: "100vh" }}
     >
+      <ConfirmModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        fields={fields}
+      />
       <Row className="border border-primary rounded my-auto p-4 m-2">
         <Formik
           validationSchema={schema}
-          onSubmit={(values) => console.log(values)}
+          onSubmit={(values) => proceed(values)}
           initialValues={{
             firstName: "",
             lastName: "",
             email: "",
             password: "",
-            password2: "",
+            confirmation: "",
           }}
         >
           {({
@@ -59,7 +117,7 @@ const Signup = () => {
                     value={values.firstName}
                     onChange={handleChange}
                     isValid={touched.firstName && !errors.firstName}
-                    isInvalid={!!errors.firstName}
+                    isInvalid={!!errors.firstName && touched.firstName}
                   />
                   <Form.Control.Feedback />
                   <Form.Control.Feedback type="invalid">
@@ -75,7 +133,7 @@ const Signup = () => {
                     value={values.lastName}
                     onChange={handleChange}
                     isValid={touched.lastName && !errors.lastName}
-                    isInvalid={!!errors.lastName}
+                    isInvalid={!!errors.lastName && touched.lastName}
                   />
 
                   <Form.Control.Feedback />
@@ -95,7 +153,7 @@ const Signup = () => {
                     value={values.email}
                     onChange={handleChange}
                     isValid={touched.email && !errors.email}
-                    isInvalid={!!errors.email}
+                    isInvalid={!!errors.email && touched.email}
                   />
                   <Form.Control.Feedback />
                   <Form.Control.Feedback type="invalid">
@@ -113,7 +171,7 @@ const Signup = () => {
                     value={values.password}
                     onChange={handleChange}
                     isValid={touched.password && !errors.password}
-                    isInvalid={!!errors.password}
+                    isInvalid={!!errors.password && touched.password}
                   />
                   <Form.Control.Feedback type="invalid">
                     {errors.password}
@@ -124,21 +182,24 @@ const Signup = () => {
                   <Form.Control
                     type="password"
                     placeholder="Confirm Password..."
-                    name="password2"
-                    value={values.password2}
+                    name="confirmation"
+                    value={values.confirmation}
                     onChange={handleChange}
-                    isValid={touched.password2 && !errors.password2}
-                    isInvalid={!!errors.password2}
+                    isValid={touched.confirmation && !errors.confirmation}
+                    isInvalid={!!errors.confirmation && touched.confirmation}
                   />
                   <Form.Control.Feedback type="invalid">
-                    {errors.password2}
+                    {errors.confirmation}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Form.Row>
-              {/* CheckBox and Button Row */}
+              {/*  Button Row */}
+              {showError()}
+              {showSuccess()}
+              {showLoading()}
               <Form.Row>
                 <Button className="my-3" block type="submit">
-                  Submit form
+                  Continue
                 </Button>
               </Form.Row>
             </Form>
