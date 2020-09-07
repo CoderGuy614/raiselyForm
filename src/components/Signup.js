@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import ConfirmModal from "./ConfirmModal";
 import {
   Form,
@@ -32,6 +31,7 @@ const Signup = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  //   const [confirmSubmit, setConfirmSubmit] = useState(false);
 
   const showLoading = () => (
     <div className="d-flex justify-content-center my-4">
@@ -65,12 +65,9 @@ const Signup = () => {
     </Alert>
   );
 
-  const apiPost = (values) => {
-    console.log(JSON.stringify(values));
-  };
-
   const proceed = (values) => {
-    setFields(values);
+    const { firstName, lastName, email, password } = values;
+    setFields({ firstName, lastName, email, password });
     setShowModal(true);
   };
 
@@ -121,7 +118,7 @@ const Signup = () => {
                   />
                   <Form.Control.Feedback />
                   <Form.Control.Feedback type="invalid">
-                    {errors.email}
+                    {errors.firstName}
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="validationFormik02">
@@ -138,7 +135,7 @@ const Signup = () => {
 
                   <Form.Control.Feedback />
                   <Form.Control.Feedback type="invalid">
-                    {errors.email}
+                    {errors.lastName}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Form.Row>
