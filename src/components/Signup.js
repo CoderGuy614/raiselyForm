@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ConfirmModal from "./ConfirmModal";
 import {
   Form,
@@ -29,21 +29,16 @@ const Signup = () => {
   const [fields, setFields] = useState({});
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  //   const [confirmSubmit, setConfirmSubmit] = useState(false);
+  const [response, setResponse] = useState({});
 
-  const showLoading = () => (
-    <div className="d-flex justify-content-center my-4">
-      <Spinner
-        style={{ display: loading ? "" : "none" }}
-        animation="border"
-        role="status"
-      >
-        <span className="sr-only">Loading...</span>
-      </Spinner>
-    </div>
-  );
+  useEffect(() => {
+    if (response.message) {
+      setSuccess(response.message);
+    } else if (response.error) {
+      setError(response.error);
+    }
+  }, [response]);
 
   const showError = () => (
     <Alert
@@ -51,7 +46,7 @@ const Signup = () => {
       className="mt-3"
       style={{ display: error ? "" : "none" }}
     >
-      {"Success! "}
+      {error}
     </Alert>
   );
 
@@ -61,11 +56,13 @@ const Signup = () => {
       className="mt-3"
       style={{ display: success ? "" : "none" }}
     >
-      {error}
+      {success}
     </Alert>
   );
 
   const proceed = (values) => {
+    setSuccess("");
+    setError("");
     const { firstName, lastName, email, password } = values;
     setFields({ firstName, lastName, email, password });
     setShowModal(true);
@@ -79,6 +76,7 @@ const Signup = () => {
       <ConfirmModal
         showModal={showModal}
         setShowModal={setShowModal}
+        setResponse={setResponse}
         fields={fields}
       />
       <Row className="border border-primary rounded my-auto p-4 m-2">
@@ -193,7 +191,7 @@ const Signup = () => {
               {/*  Button Row */}
               {showError()}
               {showSuccess()}
-              {showLoading()}
+
               <Form.Row>
                 <Button className="my-3" block type="submit">
                   Continue
