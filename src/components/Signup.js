@@ -56,7 +56,7 @@ const Signup = () => {
       className="mt-3"
       style={{ display: success ? "" : "none" }}
     >
-      {success}
+      {success} Please <a href="#">Click Here</a> to Login
     </Alert>
   );
 
@@ -193,7 +193,7 @@ const Signup = () => {
               {showSuccess()}
 
               <Form.Row>
-                <Button className="my-3" block type="submit">
+                <Button className="my-3" block type="submit" disabled={success}>
                   Continue
                 </Button>
               </Form.Row>
